@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ego Driven Key Generator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+
+    body {
+      background-color: #000;
+      color: #00bfff;
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 8px #00bfff;
+    }
+
+    #generateBtn {
+      padding: 12px 30px;
+      font-size: 18px;
+      background: #00bfff;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 10px #00bfff;
+    }
+
+    #generateBtn:hover:enabled {
+      background: #0099cc;
+      box-shadow: 0 0 15px #0099cc;
+    }
+
+    #generateBtn:disabled {
+      background: #444;
+      color: #777;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    pre {
+      margin-top: 30px;
+      font-size: 20px;
+      white-space: pre-wrap;
+      padding: 20px;
+      border: 2px solid #00bfff;
+      border-radius: 12px;
+      background-color: rgba(0, 191, 255, 0.05);
+      box-shadow: 0 0 15px #00bfff;
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        box-shadow: 0 0 10px #00bfff;
+      }
+      to {
+        box-shadow: 0 0 20px #00bfff, 0 0 30px #00bfff;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>EGO DRIVEN // 48-HOUR KEY ACCESS</h2>
+  <button id="generateBtn" onclick="generateKey()">GENERATE KEY</button>
+  <pre id="output"></pre>
+
+  <script>
+    function generateKey() {
+      const prefix = "Ego-Driv3n_";
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let randomPart = "";
+
+      for (let i = 0; i < 12; i++) {
+        randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+
+      const fullKey = prefix + randomPart;
+      const now = Date.now();
+      const expiry = now + (48 * 60 * 60 * 1000); // 48 hours
+
+      localStorage.setItem("ego_key", fullKey);
+      localStorage.setItem("ego_expires", expiry);
+
+      displayKey(fullKey, expiry);
+      document.getElementById("generateBtn").disabled = true;
+    }
+
+    function displayKey(key, expiry) {
+      const date = new Date(parseInt(expiry));
+      document.getElementById('output').innerText = 
+        `YOUR ACCESS KEY:\n${key}\n\nEXPIRES ON:\n${date.toLocaleString()}`;
+    }
+
+    function checkKeyStatus() {
+      const key = localStorage.getItem("ego_key");
+      const expiry = localStorage.getItem("ego_expires");
+
+      if (key && expiry) {
+        const now = Date.now();
+        if (now < parseInt(expiry)) {
+          displayKey(key, expiry);
+          document.getElementById("generateBtn").disabled = true;
+        } else {
+          localStorage.removeItem("ego_key");
+          localStorage.removeItem("ego_expires");
+          document.getElementById("generateBtn").disabled = false;
+          document.getElementById("output").innerText = "YOUR KEY HAS EXPIRED\n>> GENERATE A NEW ONE";
+        }
+      }
+    }
+
+    window.onload = checkKeyStatus;
+  </script>
+</body>
+</html>
